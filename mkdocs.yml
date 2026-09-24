@@ -1,0 +1,46 @@
+site_name: Довідничок 3-го класу
+site_description: Шкільний довідник з математики та інших предметів
+site_author: Тато і Син
+
+theme:
+  name: material
+  language: uk
+  palette:
+    # Світла тема
+    - scheme: default
+      primary: deep purple
+      accent: amber
+      toggle:
+        icon: material/weather-night
+        name: Увімкнути темну тему
+    # Темна тема
+    - scheme: slate
+      primary: deep purple
+      accent: amber
+      toggle:
+        icon: material/weather-sunny
+        name: Увімкнути світлу тему
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - search.share
+    - content.action.edit
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - attr_list
+  - md_in_html
+  - tables
+
+nav:
+  - Головна: index.md
+  - Математика:
+      - Таблиця множення: math/multiplication.md
+      - Задачі та формули: math/rules.md
+  - Українська мова:
+      - Частини мови: ukr/parts-of-speech.md
