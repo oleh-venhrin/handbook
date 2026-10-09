@@ -1,8 +1,9 @@
-@echo off
+﻿@echo off
+chcp 65001 > nul
 echo ===================================================
-echo   Запуск попереднього перегляду довідника
-echo   Відкрийте у браузері: http://127.0.0.1:8000
+echo   Запуск перегляду довідника (Astro Starlight)
+echo   Відкрийте у браузері: http://localhost:4321/handbook/
 echo   Для зупинки натисніть Ctrl+C
 echo ===================================================
-"C:\Users\23059\.venvs\handbook\Scripts\mkdocs.exe" serve
+call npm run dev
 pause

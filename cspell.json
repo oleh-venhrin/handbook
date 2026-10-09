@@ -1,0 +1,67 @@
+{
+  "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
+  "version": "0.2",
+  "language": "en,uk",
+  "import": [
+    "@cspell/dict-uk-ua"
+  ],
+  "dictionaries": [
+    "uk-ua"
+  ],
+  "ignoreRegExpList": [
+    "/\\${1,2}[^$]*?\\${1,2}/g"
+  ],
+  "words": [
+    "astro",
+    "frontmatter",
+    "katex",
+    "KaTeX",
+    "mathbf",
+    "mathjax",
+    "rehype",
+    "remark",
+    "seti",
+    "starlight",
+    "Venhrin",
+    "Venhrina",
+    "YADS",
+    "Держстандарт",
+    "достовірну",
+    "Енергозбереження",
+    "колаут",
+    "колаути",
+    "колаутів",
+    "Кріпер",
+    "Кріпера",
+    "лайфхак",
+    "лайфхаки",
+    "літос",
+    "найвибуховіше",
+    "НУШ",
+    "Опадомір",
+    "пісковик",
+    "пісковика",
+    "подільчивість",
+    "прийомами",
+    "рендеряться",
+    "Тссс",
+    "ЯДС"
+  ],
+  "ignorePaths": [
+    "node_modules/**",
+    "dist/**",
+    ".astro/**",
+    "package-lock.json",
+    "mkdocs_backup.zip",
+    "_archive_docs/**",
+    "_textbooks/**",
+    "site/**",
+    ".git/**",
+    "*.svg",
+    "*.png",
+    "*.jpg",
+    "*.jpeg",
+    "*.webp",
+    "*.zip"
+  ]
+}

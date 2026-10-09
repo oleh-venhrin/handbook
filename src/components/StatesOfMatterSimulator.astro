@@ -1,0 +1,848 @@
+---
+// src/components/StatesOfMatterSimulator.astro
+---
+
+<div class="states-simulator">
+  <div class="sim-header">
+    <div class="sim-title">
+      <span class="sim-icon">🌡️</span>
+      <strong>Лабораторія станів: як температура змінює танець частинок</strong>
+    </div>
+    <div class="sim-badge" id="state-badge">💧 Рідкий стан (вода)</div>
+  </div>
+
+  <div class="canvas-container">
+    <canvas id="matter-canvas" width="600" height="320"></canvas>
+    <div class="temp-floating" id="temp-display">20 °C</div>
+  </div>
+
+  <div class="sim-controls">
+    <div class="slider-wrapper">
+      <div class="slider-scale">
+        <div class="scale-point point-min">
+          <span class="scale-temp">-20 °C</span>
+          <div class="tick-mark"></div>
+        </div>
+        <div class="scale-point point-zero">
+          <span class="scale-temp">0 °C</span>
+          <span class="scale-note">Тане</span>
+          <div class="tick-mark important"></div>
+        </div>
+        <div class="scale-point point-boil">
+          <span class="scale-temp">100 °C</span>
+          <span class="scale-note">Кипить</span>
+          <div class="tick-mark important"></div>
+        </div>
+        <div class="scale-point point-max">
+          <span class="scale-temp">+120 °C</span>
+          <div class="tick-mark"></div>
+        </div>
+      </div>
+
+      <input 
+        type="range" 
+        id="temp-slider" 
+        min="-20" 
+        max="120" 
+        value="20" 
+        step="1"
+        aria-label="Регулятор температури"
+      />
+
+      <div class="phase-zones">
+        <div class="zone-solid" style="width: 14.29%;"><span>ЛІД</span></div>
+        <div class="zone-liquid" style="width: 71.42%;"><span>РІДКА ВОДА</span></div>
+        <div class="zone-gas" style="width: 14.29%;"><span>ПАРА</span></div>
+      </div>
+    </div>
+
+    <div class="preset-buttons">
+      <button type="button" class="preset-btn" data-temp="-15">🧊 Лід (-15°C)</button>
+      <button type="button" class="preset-btn active" data-temp="20">💧 Вода (+20°C)</button>
+      <button type="button" class="preset-btn" data-temp="75">☕ Чай (+75°C)</button>
+      <button type="button" class="preset-btn" data-temp="115">💨 Пара (+115°C)</button>
+    </div>
+  </div>
+
+  <div class="sim-explanation" id="state-description">
+    <strong>💧 Рідка вода (20 °C):</strong> Частинки знаходяться близько, але не зчеплені намертво. Вони вільно ковзають і перекочуються одна повз одну на дні посудини.
+  </div>
+</div>
+
+<style>
+  .states-simulator {
+    background: var(--sl-color-gray-6);
+    border: 2px solid var(--sl-color-accent);
+    border-radius: 16px;
+    padding: 1.25rem;
+    margin: 1.75rem 0;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  }
+
+  .sim-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .sim-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.05rem;
+    color: var(--sl-color-white);
+  }
+
+  .sim-icon {
+    font-size: 1.4rem;
+  }
+
+  .sim-badge {
+    padding: 0.35rem 0.85rem;
+    border-radius: 9999px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    background: #0284c7;
+    color: white;
+    transition: all 0.3s ease;
+  }
+
+  .canvas-container {
+    position: relative;
+    width: 100%;
+    background: #0f172a;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 3px solid #334155;
+    box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
+  }
+
+  #matter-canvas {
+    display: block;
+    width: 100%;
+    height: 320px;
+  }
+
+  .temp-floating {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(4px);
+    border: 2px solid #38bdf8;
+    color: #38bdf8;
+    font-weight: 800;
+    font-size: 1.2rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 8px;
+    font-family: monospace;
+    pointer-events: none;
+    transition: border-color 0.3s, color 0.3s;
+  }
+
+  .sim-controls {
+    margin-top: 1.25rem;
+  }
+
+  .slider-wrapper {
+    position: relative;
+    margin-bottom: 1.25rem;
+  }
+
+  .slider-scale {
+    position: relative;
+    height: 40px;
+    margin-bottom: 2px;
+  }
+
+  .scale-point {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .scale-point.point-min {
+    left: 0;
+    align-items: flex-start;
+  }
+
+  .scale-point.point-min .tick-mark {
+    margin-left: 11px;
+  }
+
+  .scale-point.point-zero {
+    left: calc(12px + (100% - 24px) * 0.1429);
+    transform: translateX(-50%);
+  }
+
+  .scale-point.point-boil {
+    left: calc(12px + (100% - 24px) * 0.8571);
+    transform: translateX(-50%);
+  }
+
+  .scale-point.point-max {
+    right: 0;
+    align-items: flex-end;
+  }
+
+  .scale-point.point-max .tick-mark {
+    margin-right: 11px;
+  }
+
+  .scale-temp {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--sl-color-gray-3);
+    line-height: 1.1;
+  }
+
+  .scale-note {
+    font-size: 0.68rem;
+    font-weight: 600;
+    line-height: 1.1;
+    margin-top: 2px;
+  }
+
+  .point-zero .scale-temp {
+    color: #38bdf8;
+  }
+
+  .point-zero .scale-note {
+    color: #7dd3fc;
+  }
+
+  .point-boil .scale-temp {
+    color: #ef4444;
+  }
+
+  .point-boil .scale-note {
+    color: #fca5a5;
+  }
+
+  .tick-mark {
+    width: 2px;
+    height: 6px;
+    background: var(--sl-color-gray-4);
+    margin-top: 3px;
+    border-radius: 1px;
+  }
+
+  .tick-mark.important {
+    width: 2px;
+    height: 9px;
+  }
+
+  .point-zero .tick-mark {
+    background: #38bdf8;
+  }
+
+  .point-boil .tick-mark {
+    background: #ef4444;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 12px;
+    border-radius: 6px;
+    background: linear-gradient(
+      to right,
+      #0284c7 0%,
+      #0284c7 14.3%,
+      #0ea5e9 14.3%,
+      #0284c7 35%,
+      #f59e0b 65%,
+      #ea580c 85.7%,
+      #ef4444 85.7%,
+      #dc2626 100%
+    );
+    outline: none;
+    cursor: pointer;
+    margin: 0;
+    display: block;
+    position: relative;
+    z-index: 2;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 3px solid var(--thumb-color, #7c3aed);
+    box-shadow: 0 0 10px var(--thumb-glow, rgba(124, 58, 237, 0.4)), 0 2px 6px rgba(0, 0, 0, 0.35);
+    cursor: grab;
+    transition: transform 0.15s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  input[type="range"]::-webkit-slider-thumb:active {
+    cursor: grabbing;
+    transform: scale(1.15);
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 3px solid var(--thumb-color, #7c3aed);
+    box-shadow: 0 0 10px var(--thumb-glow, rgba(124, 58, 237, 0.4)), 0 2px 6px rgba(0, 0, 0, 0.35);
+    cursor: grab;
+  }
+
+  input[type="range"]::-moz-range-track {
+    background: transparent;
+    height: 12px;
+    border-radius: 6px;
+  }
+
+  .phase-zones {
+    display: flex;
+    margin: 8px 12px 14px 12px;
+    height: 20px;
+    border-radius: 6px;
+    overflow: hidden;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-align: center;
+    line-height: 20px;
+    user-select: none;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .zone-solid {
+    background: rgba(2, 132, 199, 0.25);
+    color: #7dd3fc;
+    border-right: 1px dashed rgba(56, 189, 248, 0.6);
+  }
+
+  .zone-liquid {
+    background: rgba(14, 165, 233, 0.15);
+    color: #38bdf8;
+    border-right: 1px dashed rgba(239, 68, 68, 0.6);
+  }
+
+  .zone-gas {
+    background: rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+  }
+
+  .preset-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .preset-btn {
+    background: var(--sl-color-gray-5);
+    border: 1px solid var(--sl-color-gray-4);
+    color: var(--sl-color-white);
+    padding: 0.4rem 0.85rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .preset-btn:hover {
+    background: var(--sl-color-accent);
+    color: white;
+    border-color: var(--sl-color-accent);
+    transform: translateY(-1px);
+  }
+
+  .preset-btn.active {
+    background: var(--sl-color-accent);
+    color: white;
+    border-color: var(--sl-color-accent-high);
+    box-shadow: 0 0 10px rgba(124, 58, 237, 0.4);
+  }
+
+  .sim-explanation {
+    margin-top: 1rem;
+    padding: 0.85rem 1rem;
+    border-radius: 8px;
+    background: var(--sl-color-gray-5);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    border-left: 4px solid #0284c7;
+    transition: all 0.3s ease;
+  }
+</style>
+
+<script>
+  function initStatesSimulator() {
+    const canvas = document.getElementById('matter-canvas') as HTMLCanvasElement | null;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const slider = document.getElementById('temp-slider') as HTMLInputElement | null;
+    const tempDisplay = document.getElementById('temp-display');
+    const badge = document.getElementById('state-badge');
+    const desc = document.getElementById('state-description');
+    const presetBtns = document.querySelectorAll('.preset-btn');
+
+    let currentTemp = 20;
+    let targetTemp = 20;
+
+    // Simulation parameters
+    const PARTICLE_COUNT = 32;
+    const RADIUS = 14;
+
+    interface Particle {
+      x: number;
+      y: number;
+      vx: number;
+      vy: number;
+      gridX: number;
+      gridY: number;
+      blinkTimer: number;
+      isBlinking: boolean;
+      color: string;
+    }
+
+    const particles: Particle[] = [];
+
+    // Initialize particles
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      particles.push({
+        x: 0,
+        y: 0,
+        vx: (Math.random() - 0.5) * 2,
+        vy: (Math.random() - 0.5) * 2,
+        gridX: 0,
+        gridY: 0,
+        blinkTimer: Math.random() * 200,
+        isBlinking: false,
+        color: '#38bdf8'
+      });
+    }
+
+    function resizeCanvas() {
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * window.devicePixelRatio;
+      canvas.height = rect.height * window.devicePixelRatio;
+      ctx?.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+      // Recompute grid positions for solid state (centered crystal lattice)
+      const cols = 8;
+      const rows = 4;
+      const spacing = RADIUS * 2.5;
+      const startX = (rect.width - cols * spacing) / 2 + spacing / 2;
+      const startY = rect.height - rows * spacing - 25;
+
+      particles.forEach((p, idx) => {
+        const col = idx % cols;
+        const row = Math.floor(idx / cols);
+        p.gridX = startX + col * spacing;
+        p.gridY = startY + row * spacing;
+        if (p.x === 0 && p.y === 0) {
+          p.x = p.gridX;
+          p.y = p.gridY;
+        }
+      });
+    }
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    const root = canvas.closest('.states-simulator') as HTMLElement | null;
+
+    // Update state text & theme colors
+    function updateStateUI(temp: number) {
+      if (tempDisplay) {
+        tempDisplay.textContent = `${Math.round(temp)} °C`;
+      }
+
+      if (temp < 0) {
+        // Solid / Ice
+        if (root) {
+          root.style.setProperty('--thumb-color', '#38bdf8');
+          root.style.setProperty('--thumb-glow', 'rgba(56, 189, 248, 0.5)');
+        }
+        if (tempDisplay) {
+          tempDisplay.style.color = '#7dd3fc';
+          tempDisplay.style.borderColor = '#7dd3fc';
+        }
+        if (badge) {
+          badge.textContent = '🧊 Твердий стан (лід)';
+          badge.style.background = '#0284c7';
+        }
+        if (desc) {
+          desc.style.borderLeftColor = '#0284c7';
+          desc.innerHTML = `<strong>🧊 Твердий лід (${Math.round(temp)} °C):</strong> Частинки вишикувані рівними рядами й міцно тримаються "за руки". Вони не можуть бігати — тільки ледь тремтять на своїх місцях! Форма й об'єм сталі.`;
+        }
+      } else if (temp < 100) {
+        // Liquid / Water
+        const isWarm = temp > 60;
+        if (root) {
+          root.style.setProperty('--thumb-color', isWarm ? '#ea580c' : '#0284c7');
+          root.style.setProperty('--thumb-glow', isWarm ? 'rgba(234, 88, 12, 0.5)' : 'rgba(2, 132, 199, 0.4)');
+        }
+        if (tempDisplay) {
+          tempDisplay.style.color = isWarm ? '#fb923c' : '#38bdf8';
+          tempDisplay.style.borderColor = isWarm ? '#fb923c' : '#38bdf8';
+        }
+        if (badge) {
+          badge.textContent = isWarm ? '☕ Гаряча вода (чай)' : '💧 Рідкий стан (вода)';
+          badge.style.background = isWarm ? '#ea580c' : '#0284c7';
+        }
+        if (desc) {
+          desc.style.borderLeftColor = isWarm ? '#ea580c' : '#0284c7';
+          desc.innerHTML = `<strong>💧 Рідка вода (${Math.round(temp)} °C):</strong> Частинки відпустили руки й вільно ковзають одна повз одну на дні посудини. ${temp > 50 ? 'Чим вища температура — тим швидший їхній танець!' : 'Вода легко набуває форми будь-якого посуду.'}`;
+        }
+      } else {
+        // Gas / Steam
+        if (root) {
+          root.style.setProperty('--thumb-color', '#ef4444');
+          root.style.setProperty('--thumb-glow', 'rgba(239, 68, 68, 0.5)');
+        }
+        if (tempDisplay) {
+          tempDisplay.style.color = '#ef4444';
+          tempDisplay.style.borderColor = '#ef4444';
+        }
+        if (badge) {
+          badge.textContent = '💨 Газоподібний стан (водяна пара)';
+          badge.style.background = '#dc2626';
+        }
+        if (desc) {
+          desc.style.borderLeftColor = '#dc2626';
+          desc.innerHTML = `<strong>💨 Водяна пара (${Math.round(temp)} °C):</strong> Від високої енергії частинки розірвали всі зв'язки й носяться на шаленій швидкості по всій кімнаті, врізаючись у стіни! Газ не тримає форми й заповнює весь простір.`;
+        }
+      }
+    }
+
+    if (slider) {
+      slider.addEventListener('input', (e) => {
+        targetTemp = parseFloat((e.target as HTMLInputElement).value);
+        presetBtns.forEach(b => {
+          const bTemp = parseFloat(b.getAttribute('data-temp') || '999');
+          if (Math.abs(bTemp - targetTemp) <= 2) {
+            b.classList.add('active');
+          } else {
+            b.classList.remove('active');
+          }
+        });
+      });
+    }
+
+    presetBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        presetBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const temp = parseFloat(btn.getAttribute('data-temp') || '20');
+        targetTemp = temp;
+        if (slider) slider.value = temp.toString();
+      });
+    });
+
+    // Draw cute particle face
+    function drawFace(x: number, y: number, state: 'solid' | 'liquid' | 'gas', isBlinking: boolean) {
+      if (!ctx) return;
+      ctx.fillStyle = '#0f172a';
+
+      // Eyes
+      const eyeOffset = 4.5;
+      const eyeY = y - 2;
+
+      if (isBlinking) {
+        // Blinking slits
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(x - eyeOffset - 2, eyeY);
+        ctx.lineTo(x - eyeOffset + 2, eyeY);
+        ctx.moveTo(x + eyeOffset - 2, eyeY);
+        ctx.lineTo(x + eyeOffset + 2, eyeY);
+        ctx.stroke();
+      } else {
+        // Round open eyes with white highlight
+        ctx.beginPath();
+        ctx.arc(x - eyeOffset, eyeY, 1.8, 0, Math.PI * 2);
+        ctx.arc(x + eyeOffset, eyeY, 1.8, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(x - eyeOffset + 0.6, eyeY - 0.6, 0.7, 0, Math.PI * 2);
+        ctx.arc(x + eyeOffset + 0.6, eyeY - 0.6, 0.7, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Mouth
+      ctx.strokeStyle = '#0f172a';
+      ctx.fillStyle = '#0f172a';
+      ctx.lineWidth = 1.3;
+      ctx.beginPath();
+
+      if (state === 'solid') {
+        // Calm small smile
+        ctx.arc(x, y + 2, 3, 0.15 * Math.PI, 0.85 * Math.PI);
+        ctx.stroke();
+      } else if (state === 'liquid') {
+        // Happy smile
+        ctx.arc(x, y + 2.5, 3.5, 0.1 * Math.PI, 0.9 * Math.PI);
+        ctx.stroke();
+      } else {
+        // Excited open laughing mouth for gas
+        ctx.arc(x, y + 2, 4, 0, Math.PI);
+        ctx.fill();
+      }
+
+      // Cute pink cheeks
+      ctx.fillStyle = 'rgba(244, 114, 182, 0.55)';
+      ctx.beginPath();
+      ctx.arc(x - 6.5, y + 2, 1.8, 0, Math.PI * 2);
+      ctx.arc(x + 6.5, y + 2, 1.8, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Animation Loop
+    function animate() {
+      if (!canvas || !ctx) return;
+      const width = canvas.getBoundingClientRect().width;
+      const height = canvas.getBoundingClientRect().height;
+
+      // Smoothly approach target temperature
+      currentTemp += (targetTemp - currentTemp) * 0.1;
+      updateStateUI(currentTemp);
+
+      // Determine state
+      const isSolid = currentTemp < 0;
+      const isGas = currentTemp >= 100;
+      const stateType: 'solid' | 'liquid' | 'gas' = isSolid ? 'solid' : (isGas ? 'gas' : 'liquid');
+
+      // Clear & draw background
+      ctx.clearRect(0, 0, width, height);
+
+      // Container background styling
+      if (isSolid) {
+        // Icy frost tint
+        const frostGrad = ctx.createLinearGradient(0, 0, 0, height);
+        frostGrad.addColorStop(0, '#0c1b33');
+        frostGrad.addColorStop(1, '#0e2b4f');
+        ctx.fillStyle = frostGrad;
+        ctx.fillRect(0, 0, width, height);
+
+        // Frost borders
+        ctx.strokeStyle = 'rgba(186, 230, 253, 0.3)';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(10, 10, width - 20, height - 20);
+      } else if (isGas) {
+        // Warm steam tint
+        const steamGrad = ctx.createLinearGradient(0, 0, 0, height);
+        steamGrad.addColorStop(0, '#2e1015');
+        steamGrad.addColorStop(1, '#1e1b2e');
+        ctx.fillStyle = steamGrad;
+        ctx.fillRect(0, 0, width, height);
+      } else {
+        // Liquid container
+        const waterGrad = ctx.createLinearGradient(0, 0, 0, height);
+        waterGrad.addColorStop(0, '#0f172a');
+        waterGrad.addColorStop(0.5, '#0d2238');
+        waterGrad.addColorStop(1, '#082f49');
+        ctx.fillStyle = waterGrad;
+        ctx.fillRect(0, 0, width, height);
+
+        // Water level surface line
+        const waterLevelY = height * 0.45;
+        ctx.fillStyle = 'rgba(56, 189, 248, 0.08)';
+        ctx.fillRect(0, waterLevelY, width, height - waterLevelY);
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.4)';
+        ctx.setLineDash([6, 6]);
+        ctx.beginPath();
+        ctx.moveTo(0, waterLevelY);
+        ctx.lineTo(width, waterLevelY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      // Physics update & rendering for each particle
+      particles.forEach((p, idx) => {
+        // Blinking logic
+        p.blinkTimer--;
+        if (p.blinkTimer <= 0) {
+          p.isBlinking = !p.isBlinking;
+          p.blinkTimer = p.isBlinking ? 8 : 120 + Math.random() * 150;
+        }
+
+        if (isSolid) {
+          // --- SOLID STATE ---
+          // Shiver around strict lattice grid positions
+          const shiverAmp = 0.8 + ((currentTemp + 20) / 20) * 1.5;
+          const targetX = p.gridX + (Math.random() - 0.5) * shiverAmp;
+          const targetY = p.gridY + (Math.random() - 0.5) * shiverAmp;
+
+          p.x += (targetX - p.x) * 0.3;
+          p.y += (targetY - p.y) * 0.3;
+
+          // Connecting spring lines to neighbors
+          if (idx % 8 < 7) {
+            const nextP = particles[idx + 1];
+            ctx.strokeStyle = 'rgba(186, 230, 253, 0.35)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(nextP.x, nextP.y);
+            ctx.stroke();
+          }
+          if (idx < 24) {
+            const downP = particles[idx + 8];
+            ctx.strokeStyle = 'rgba(186, 230, 253, 0.35)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(downP.x, downP.y);
+            ctx.stroke();
+          }
+        } else if (isGas) {
+          // --- GAS STATE ---
+          // Chaotic high-speed flight across the entire container
+          const speedMultiplier = 3.5 + ((currentTemp - 100) / 20) * 2;
+          
+          p.x += p.vx * speedMultiplier;
+          p.y += p.vy * speedMultiplier;
+
+          // Wall bounces
+          if (p.x - RADIUS < 0) { p.x = RADIUS; p.vx = Math.abs(p.vx); }
+          if (p.x + RADIUS > width) { p.x = width - RADIUS; p.vx = -Math.abs(p.vx); }
+          if (p.y - RADIUS < 0) { p.y = RADIUS; p.vy = Math.abs(p.vy); }
+          if (p.y + RADIUS > height) { p.y = height - RADIUS; p.vy = -Math.abs(p.vy); }
+
+          // Motion trails
+          ctx.strokeStyle = 'rgba(248, 113, 113, 0.25)';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(p.x - p.vx * 8, p.y - p.vy * 8);
+          ctx.lineTo(p.x, p.y);
+          ctx.stroke();
+        } else {
+          // --- LIQUID STATE ---
+          // Rolling, flowing at the bottom with gravity and temperature agitation
+          const speedFactor = 0.5 + (currentTemp / 100) * 2.2;
+          const gravity = 0.25;
+          const floorY = height - RADIUS - 10;
+          const liquidCeilingY = height * 0.45;
+
+          p.vy += gravity;
+          p.x += p.vx * speedFactor;
+          p.y += p.vy;
+
+          // Agitate randomly depending on temperature
+          p.vx += (Math.random() - 0.5) * (0.2 + (currentTemp / 100) * 0.5);
+          p.vx *= 0.98; // Friction
+
+          // Bottom bounce
+          if (p.y > floorY) {
+            p.y = floorY;
+            p.vy = -Math.abs(p.vy) * 0.6;
+          }
+
+          // Top liquid surface restraint
+          if (p.y < liquidCeilingY) {
+            p.y = liquidCeilingY;
+            p.vy = Math.abs(p.vy) * 0.5;
+          }
+
+          // Side walls
+          if (p.x - RADIUS < 15) { p.x = 15 + RADIUS; p.vx = Math.abs(p.vx); }
+          if (p.x + RADIUS > width - 15) { p.x = width - 15 - RADIUS; p.vx = -Math.abs(p.vx); }
+        }
+
+        // Particle particle collision avoidance (for liquid & gas)
+        for (let j = idx + 1; j < particles.length; j++) {
+          const other = particles[j];
+          const dx = other.x - p.x;
+          const dy = other.y - p.y;
+          const dist = Math.hypot(dx, dy);
+          const minDist = RADIUS * 2;
+
+          if (dist < minDist && dist > 0) {
+            const overlap = (minDist - dist) / 2;
+            const nx = dx / dist;
+            const ny = dy / dist;
+
+            if (!isSolid) {
+              p.x -= nx * overlap;
+              p.y -= ny * overlap;
+              other.x += nx * overlap;
+              other.y += ny * overlap;
+
+              // Exchange velocities
+              const kx = p.vx - other.vx;
+              const ky = p.vy - other.vy;
+              const p_dot = 2 * (nx * kx + ny * ky) / 2;
+              p.vx -= p_dot * nx;
+              p.vy -= p_dot * ny;
+              other.vx += p_dot * nx;
+              other.vy += p_dot * ny;
+            }
+          }
+        }
+
+        // --- DRAW SPHERICAL PARTICLE ---
+        const radGrad = ctx.createRadialGradient(
+          p.x - RADIUS * 0.35, p.y - RADIUS * 0.35, RADIUS * 0.1,
+          p.x, p.y, RADIUS
+        );
+
+        if (isSolid) {
+          radGrad.addColorStop(0, '#e0f2fe');
+          radGrad.addColorStop(0.7, '#38bdf8');
+          radGrad.addColorStop(1, '#0284c7');
+        } else if (isGas) {
+          radGrad.addColorStop(0, '#fef2f2');
+          radGrad.addColorStop(0.6, '#f87171');
+          radGrad.addColorStop(1, '#dc2626');
+        } else {
+          // Liquid (changes from cyan to warm blue/orange as it heats)
+          if (currentTemp > 60) {
+            radGrad.addColorStop(0, '#ffedd5');
+            radGrad.addColorStop(0.6, '#fb923c');
+            radGrad.addColorStop(1, '#ea580c');
+          } else {
+            radGrad.addColorStop(0, '#e0f2fe');
+            radGrad.addColorStop(0.6, '#38bdf8');
+            radGrad.addColorStop(1, '#0369a1');
+          }
+        }
+
+        ctx.fillStyle = radGrad;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, RADIUS, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Shading stroke
+        ctx.strokeStyle = isSolid ? '#bae6fd' : (isGas ? '#fca5a5' : '#7dd3fc');
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // Draw cute eyes & mouth
+        drawFace(p.x, p.y, stateType, p.isBlinking);
+      });
+
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  }
+
+  // Run on page load and on Astro view transitions
+  initStatesSimulator();
+  document.addEventListener('astro:page-load', initStatesSimulator);
+</script>

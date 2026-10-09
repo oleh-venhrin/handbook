@@ -1,13 +1,21 @@
-# Virtual environments
+# Astro & Node build output
+dist/
+.astro/
+node_modules/
+
+# Old Python & MkDocs
 .venv/
 venv/
 ENV/
-
-# MkDocs build output
 site/
+_archive_docs/
+_textbooks/
+mkdocs_backup.zip
 
 # OS and editor files
 .DS_Store
 Thumbs.db
-.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
 .idea/

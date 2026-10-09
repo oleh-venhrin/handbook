@@ -1,0 +1,26 @@
+{
+  "name": "handbook",
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "spellcheck": "cspell \"src/**/*.{md,mdx,astro,ts,js,mjs}\" \"*.md\"",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.32.0",
+    "astro": "^5.4.0",
+    "katex": "^0.16.11",
+    "medium-zoom": "^1.1.0",
+    "rehype-katex": "^7.0.1",
+    "remark-math": "^6.0.0",
+    "sharp": "^0.33.5"
+  },
+  "devDependencies": {
+    "@cspell/dict-uk-ua": "^4.0.7",
+    "cspell": "^10.3.6"
+  }
+}

@@ -32,6 +32,8 @@ theme:
     - content.action.edit
 
 markdown_extensions:
+  - pymdownx.arithmatex:
+      generic: true
   - admonition
   - pymdownx.details
   - pymdownx.superfences
@@ -39,10 +41,25 @@ markdown_extensions:
   - md_in_html
   - tables
 
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
 nav:
   - Головна: index.md
   - Математика:
-      - Таблиця множення: math/multiplication.md
+      - Таблиця Піфагора: math/multiplication.md
+      - Щоденник Стіва (Множення в Minecraft):
+          - День 1. Дзеркало блоків (× 1): math/minecraft/day-01.md
+          - День 2. Стів і Алекс (× 2): math/minecraft/day-02.md
+          - День 3. Кріпер і TNT (× 3): math/minecraft/day-03.md
+          - День 4. Загін на фермі (× 4): math/minecraft/day-04.md
+          - День 5. Торговець і смарагди (× 5): math/minecraft/day-05.md
+          - День 6. Бджоли і стільники (× 6): math/minecraft/day-06.md
+          - День 7. Зачарована вежа (× 7): math/minecraft/day-07.md
+          - День 8. Печера павуків (× 8): math/minecraft/day-08.md
+          - День 9. Таємниця верстака (× 9): math/minecraft/day-09.md
+          - День 10. Портал у Незер (× 10): math/minecraft/day-10.md
       - Задачі та формули: math/rules.md
   - Українська мова:
       - Частини мови: ukr/parts-of-speech.md

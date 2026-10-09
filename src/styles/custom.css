@@ -1,0 +1,89 @@
+/* Custom Starlight styling for Довідничок 3-го класу */
+
+:root {
+  --sl-color-accent-low: #2e1065;
+  --sl-color-accent: #8b5cf6;
+  --sl-color-accent-high: #ddd6fe;
+  --sl-color-white: #ffffff;
+}
+
+:root[data-theme='light'] {
+  --sl-color-accent-low: #ede9fe;
+  --sl-color-accent: #7c3aed;
+  --sl-color-accent-high: #4c1d95;
+}
+
+/* Image styling */
+.img-card {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin: 1.5rem 0;
+  border: 2px solid var(--sl-color-gray-5);
+}
+
+.img-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 16px 32px rgba(124, 58, 237, 0.2);
+}
+
+.img-pixel-border {
+  border: 4px solid #555555;
+  box-shadow: 6px 6px 0px #222222;
+  border-radius: 4px;
+  image-rendering: pixelated;
+}
+
+/* Interactive reveal card for quizzes / secrets */
+.secret-box {
+  background: var(--sl-color-gray-6);
+  border: 2px dashed var(--sl-color-accent);
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  margin: 1.5rem 0;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+.secret-box:hover {
+  background: var(--sl-color-accent-low);
+  border-color: var(--sl-color-accent-high);
+}
+
+.secret-box summary {
+  font-weight: bold;
+  font-size: 1.05rem;
+  color: var(--sl-color-accent-high);
+  cursor: pointer;
+}
+
+.secret-content {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--sl-color-gray-5);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Interactive multiplication flashcard */
+.math-pill {
+  display: inline-block;
+  background: linear-gradient(135deg, #7c3aed, #ec4899);
+  color: white !important;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  margin: 0.2rem;
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.3);
+}
+
+/* KaTeX formula font size boost */
+.katex {
+  font-size: 1.15em;
+}
