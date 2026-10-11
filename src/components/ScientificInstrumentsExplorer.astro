@@ -1,0 +1,835 @@
+---
+// ScientificInstrumentsExplorer.astro
+import { Image } from 'astro:assets';
+import toolsDeskImg from '../assets/images/world/science-tools-desk.jpg';
+---
+
+<div class="instruments-explorer-container not-content" id="instruments-explorer">
+  <div class="explorer-header">
+    <div class="title-badge">🔬 Інтерактивна лабораторія</div>
+    <h3>Стіл дослідника: розпізнай прилади вченого</h3>
+    <p class="subtitle">
+      Розглянь прилади на столі та обирай значок під ним, щоб розкрити суперсилу кожного приладу!
+    </p>
+  </div>
+
+  <!-- 1. Full-width clean image -->
+  <div class="image-wrapper">
+    <Image 
+      src={toolsDeskImg} 
+      alt="Чистий робочий стіл юного науковця з повним набором приладів для дослідження природи" 
+      class="lab-image" 
+      loading="eager"
+    />
+  </div>
+
+  <!-- 2. Compact horizontal row of emoji-only buttons -->
+  <div class="emoji-toolbar">
+    <span class="toolbar-label">Обери прилад:</span>
+    <div class="emoji-buttons-row" role="toolbar" aria-label="Вибір приладу для вивчення">
+      <button class="emoji-btn" data-id="magnifier" title="Лупа (збільшувальне скло)" aria-label="Лупа">🔍</button>
+      <button class="emoji-btn active" data-id="microscope" title="Мікроскоп" aria-label="Мікроскоп">🔬</button>
+      <button class="emoji-btn" data-id="telescope" title="Телескоп" aria-label="Телескоп">🔭</button>
+      <button class="emoji-btn" data-id="ruler" title="Лінійка та рулетка" aria-label="Лінійка та рулетка">📏</button>
+      <button class="emoji-btn" data-id="scales" title="Терези (ваги)" aria-label="Терези">⚖️</button>
+      <button class="emoji-btn" data-id="thermometer" title="Термометр" aria-label="Термометр">🌡️</button>
+      <button class="emoji-btn" data-id="stopwatch" title="Секундомір" aria-label="Секундомір">⏱️</button>
+      <button class="emoji-btn" data-id="cylinder" title="Мензурка (мірний циліндр)" aria-label="Мензурка">🧪</button>
+      <button class="emoji-btn" data-id="compass" title="Компас" aria-label="Компас">🧭</button>
+    </div>
+  </div>
+
+  <!-- 3. Full-width explanation card placed UNDER buttons -->
+  <div class="active-card" id="instrument-detail-card">
+    <div class="card-badge" id="card-group-badge">Оптичний прилад</div>
+    <div class="card-main-header">
+      <span class="card-icon" id="card-icon">🔬</span>
+      <h4 class="card-title" id="card-title">Мікроскоп</h4>
+    </div>
+    <div class="card-body">
+      <div class="card-prop">
+        <span class="prop-label">⚡ Що робить:</span>
+        <span class="prop-val" id="card-action">Збільшує дрібне в сотні й тисячі разів</span>
+      </div>
+      <div class="card-prop">
+        <span class="prop-label">🎯 Для чого використовують:</span>
+        <span class="prop-val" id="card-use">Розглянути клітини рослин, бактерії, кристали солі й цвіль.</span>
+      </div>
+      <div class="card-prop" id="card-unit-row">
+        <span class="prop-label">📏 Одиниці вимірювання:</span>
+        <span class="prop-val" id="card-unit">Кратність збільшення (×10, ×100, ×400)</span>
+      </div>
+      <div class="card-fact" id="card-fact">
+        💡 <strong>Секрет вченого:</strong> Саме завдяки мікроскопу люди дізналися, що все живе складається з мікроскопічних клітинок!
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Mini-quiz section -->
+  <div class="quiz-box" id="mini-quiz-box">
+    <div class="quiz-header">
+      <span class="quiz-badge">🎯 Тренажер знань</span>
+      <h4>Вгадай потрібний прилад</h4>
+    </div>
+    <p class="quiz-question" id="quiz-q-text">
+      Завантаження запитання...
+    </p>
+    <div class="quiz-options" id="quiz-options"></div>
+    <div class="quiz-feedback" id="quiz-feedback" style="display: none;"></div>
+    <button class="quiz-next-btn" id="quiz-next-btn" style="display: none;">Наступне запитання ➡️</button>
+  </div>
+</div>
+
+<style is:global>
+  .instruments-explorer-container {
+    margin: 2.5rem 0;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.25);
+    font-family: inherit;
+    backdrop-filter: blur(10px);
+  }
+
+  [data-theme='light'] .instruments-explorer-container {
+    background: linear-gradient(135deg, #ffffff 0%, #f8faff 100%);
+    border: 1px solid rgba(0, 70, 160, 0.12);
+    box-shadow: 0 10px 30px rgba(0, 50, 120, 0.08);
+  }
+
+  .explorer-header {
+    text-align: center;
+    margin-bottom: 1.25rem;
+  }
+
+  .title-badge {
+    display: inline-block;
+    padding: 0.25rem 0.85rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    border-radius: 999px;
+    background: rgba(59, 130, 246, 0.2);
+    color: #60a5fa;
+    border: 1px solid rgba(59, 130, 246, 0.4);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  [data-theme='light'] .title-badge {
+    background: #e0edff;
+    color: #1d4ed8;
+    border-color: #bfdbfe;
+  }
+
+  .explorer-header h3 {
+    margin: 0 0 0.4rem 0;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: inherit;
+  }
+
+  .subtitle {
+    margin: 0;
+    font-size: 0.95rem;
+    opacity: 0.85;
+  }
+
+  /* 1. Full-width clean image */
+  .image-wrapper {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    background: #0f172a;
+    display: block;
+    line-height: 0;
+    margin-bottom: 1rem;
+  }
+
+  .lab-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    border-radius: 14px;
+    transition: transform 0.3s ease;
+  }
+
+  /* 2. Emoji toolbar in a single compact row */
+  .emoji-toolbar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 1.25rem;
+  }
+
+  @media (min-width: 600px) {
+    .emoji-toolbar {
+      flex-direction: row;
+      justify-content: center;
+      gap: 0.85rem;
+    }
+  }
+
+  .toolbar-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    opacity: 0.75;
+  }
+
+  .emoji-buttons-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+    background: rgba(15, 23, 42, 0.45);
+    padding: 0.4rem 0.6rem;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* Ледь помітна заливка навколо кнопок з емодзі у світлій темі */
+  [data-theme='light'] .emoji-buttons-row {
+    background: rgba(241, 245, 249, 0.65);
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  }
+
+  .emoji-btn {
+    width: 42px;
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: inherit;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12);
+  }
+
+  [data-theme='light'] .emoji-btn {
+    background: #ffffff;
+    border-color: #e2e8f0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  }
+
+  .emoji-btn:hover {
+    transform: translateY(-2px) scale(1.1);
+    background: rgba(56, 189, 248, 0.18);
+    border-color: #38bdf8;
+  }
+
+  [data-theme='light'] .emoji-btn:hover {
+    background: #e0f2fe;
+    border-color: #0284c7;
+  }
+
+  .emoji-btn.active {
+    background: #0284c7 !important;
+    border-color: #38bdf8 !important;
+    transform: translateY(-2px) scale(1.12);
+    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.5);
+  }
+
+  /* 3. Full-width Active Card placed UNDER buttons */
+  .active-card {
+    background: rgba(15, 23, 42, 0.75);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    margin-bottom: 1.5rem;
+    transition: all 0.25s ease;
+  }
+
+  /* Ледь помітна заливка блоку пояснення приладу у світлій темі */
+  [data-theme='light'] .active-card {
+    background: rgba(248, 250, 252, 0.85);
+    border: 1px solid #e2e8f0;
+    color: #0f172a;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  }
+
+  .card-badge {
+    display: inline-block;
+    padding: 0.2rem 0.65rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 6px;
+    background: rgba(14, 165, 233, 0.2);
+    color: #38bdf8;
+    margin-bottom: 0.6rem;
+  }
+
+  [data-theme='light'] .card-badge {
+    background: #e0f2fe;
+    color: #0284c7;
+    border: 1px solid #bae6fd;
+  }
+
+  .card-main-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .card-icon {
+    font-size: 2.2rem;
+    line-height: 1;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3));
+  }
+
+  .card-title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: inherit;
+  }
+
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .card-prop {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.95rem;
+    line-height: 1.45;
+  }
+
+  @media (min-width: 600px) {
+    .card-prop {
+      flex-direction: row;
+      gap: 0.5rem;
+    }
+  }
+
+  .prop-label {
+    font-weight: 700;
+    color: #93c5fd;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    min-width: 170px;
+    flex-shrink: 0;
+  }
+
+  [data-theme='light'] .prop-label {
+    color: #0369a1;
+  }
+
+  .prop-val {
+    color: inherit;
+    font-weight: 500;
+  }
+
+  [data-theme='light'] .prop-val {
+    color: #334155;
+  }
+
+  .card-fact {
+    margin-top: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: rgba(234, 179, 8, 0.12);
+    border-left: 3px solid #eab308;
+    border-radius: 8px;
+    font-size: 0.92rem;
+    line-height: 1.45;
+    color: inherit;
+  }
+
+  [data-theme='light'] .card-fact {
+    background: #fefce8;
+    border-left-color: #ca8a04;
+    color: #854d0e;
+  }
+
+  /* 4. Quiz box */
+  .quiz-box {
+    padding: 1.25rem;
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(168, 85, 247, 0.08) 100%);
+    border: 1px solid rgba(168, 85, 247, 0.25);
+  }
+
+  [data-theme='light'] .quiz-box {
+    background: linear-gradient(135deg, #f5f3ff 0%, #faf5ff 100%);
+    border-color: #ddd6fe;
+    color: #0f172a;
+  }
+
+  .quiz-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .quiz-badge {
+    padding: 0.2rem 0.6rem;
+    font-size: 0.75rem;
+    font-weight: 800;
+    border-radius: 6px;
+    background: #7c3aed;
+    color: #fff;
+  }
+
+  .quiz-header h4 {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+  }
+
+  .quiz-question {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 0.85rem 0;
+    line-height: 1.4;
+  }
+
+  .quiz-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 0.85rem;
+    margin-bottom: 1rem;
+    align-items: stretch;
+  }
+
+  .quiz-option-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 46px;
+    min-height: 46px;
+    align-self: stretch;
+    box-sizing: border-box;
+    margin: 0 !important;
+    padding: 0.55rem 1rem;
+    border-radius: 12px;
+    background: #1e293b;
+    border: 2px solid #64748b;
+    color: #f8fafc !important;
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.25;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  }
+
+  .quiz-option-btn .opt-text {
+    display: inline-flex;
+    align-items: center;
+    line-height: 1.35;
+  }
+
+  [data-theme='light'] .quiz-option-btn {
+    background: #ffffff;
+    border: 2px solid #94a3b8;
+    color: #0f172a !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  }
+
+  .quiz-option-btn:hover:not(:disabled) {
+    background: #334155;
+    border-color: #a855f7;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(168, 85, 247, 0.25);
+  }
+
+  [data-theme='light'] .quiz-option-btn:hover:not(:disabled) {
+    background: #f8faff;
+    border-color: #7c3aed;
+    box-shadow: 0 6px 14px rgba(124, 58, 237, 0.15);
+  }
+
+  .quiz-option-btn:disabled {
+    cursor: default;
+  }
+
+  /* Інші нейтральні варіанти після вибору приглушуються */
+  .quiz-option-btn.muted {
+    opacity: 0.3 !important;
+    filter: grayscale(0.5);
+    border-color: transparent !important;
+    box-shadow: none !important;
+  }
+
+  /* ПРАВИЛЬНА ВІДПОВІДЬ: соковитий суцільний зелений колір і білий жирний текст */
+  .quiz-option-btn.correct {
+    background: #16a34a !important;
+    border: 3px solid #22c55e !important;
+    color: #ffffff !important;
+    opacity: 1 !important;
+    transform: scale(1.02);
+    box-shadow: 0 6px 22px rgba(22, 163, 74, 0.55) !important;
+  }
+
+  [data-theme='light'] .quiz-option-btn.correct {
+    background: #16a34a !important;
+    border: 3px solid #14532d !important;
+    color: #ffffff !important;
+    box-shadow: 0 6px 22px rgba(22, 163, 74, 0.5) !important;
+  }
+
+  .quiz-option-btn.correct span {
+    color: #ffffff !important;
+    font-weight: 800 !important;
+  }
+
+  /* ПОМИЛКОВА ВІДПОВІДЬ: соковитий суцільний червоний колір і білий жирний текст */
+  .quiz-option-btn.wrong {
+    background: #dc2626 !important;
+    border: 3px solid #ef4444 !important;
+    color: #ffffff !important;
+    opacity: 1 !important;
+    transform: scale(1.02);
+    box-shadow: 0 6px 22px rgba(220, 38, 38, 0.55) !important;
+  }
+
+  [data-theme='light'] .quiz-option-btn.wrong {
+    background: #dc2626 !important;
+    border: 3px solid #7f1d1d !important;
+    color: #ffffff !important;
+    box-shadow: 0 6px 22px rgba(220, 38, 38, 0.5) !important;
+  }
+
+  .quiz-option-btn.wrong span {
+    color: #ffffff !important;
+    font-weight: 800 !important;
+  }
+
+  /* Бейджі статусу */
+  .answer-badge {
+    font-size: 0.8rem;
+    font-weight: 800;
+    padding: 0.3rem 0.7rem;
+    border-radius: 8px;
+    white-space: nowrap;
+    margin-left: 0.5rem;
+    line-height: 1.2;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  }
+
+  .answer-badge.correct {
+    background: #14532d;
+    color: #ffffff !important;
+  }
+
+  .answer-badge.wrong {
+    background: #7f1d1d;
+    color: #ffffff !important;
+  }
+
+  .quiz-feedback {
+    padding: 0.9rem 1.15rem;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.45;
+    margin-bottom: 1rem;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .quiz-feedback.success {
+    background: rgba(6, 78, 59, 0.6);
+    border: 2px solid #22c55e;
+    color: #86efac;
+  }
+
+  [data-theme='light'] .quiz-feedback.success {
+    background: #dcfce7;
+    border: 2px solid #16a34a;
+    color: #14532d;
+  }
+
+  .quiz-feedback.error {
+    background: rgba(127, 29, 29, 0.6);
+    border: 2px solid #ef4444;
+    color: #fca5a5;
+  }
+
+  [data-theme='light'] .quiz-feedback.error {
+    background: #fee2e2;
+    border: 2px solid #dc2626;
+    color: #7f1d1d;
+  }
+
+  .quiz-next-btn {
+    padding: 0.55rem 1.1rem;
+    border-radius: 8px;
+    background: #7c3aed;
+    color: #fff;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .quiz-next-btn:hover {
+    background: #6d28d9;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+
+<script>
+  const instrumentsData = {
+    microscope: {
+      title: "Мікроскоп",
+      icon: "🔬",
+      group: "Оптичний прилад",
+      action: "Збільшує дрібне в сотні й тисячі разів",
+      use: "Розглянути клітини рослин, бактерії, кристали солі й цвіль.",
+      unit: "Кратність збільшення (×50, ×100, ×400)",
+      fact: "💡 Секрет вченого: Саме завдяки мікроскопу люди дізналися, що все живе побудовано з мікроскопічних клітинок!"
+    },
+    magnifier: {
+      title: "Лупа (збільшувальне скло)",
+      icon: "🔍",
+      group: "Оптичний прилад",
+      action: "Збільшує дрібні деталі в 2–10 разів",
+      use: "Розглянути прожилки листочка, лапку комахи, піщинки чи структуру тканини.",
+      unit: "Кратність збільшення (×2, ×5)",
+      fact: "💡 Секрет вченого: Лупа — найперший інструмент польового дослідника. Вона поміщається в будь-яку кишеню!"
+    },
+    telescope: {
+      title: "Телескоп",
+      icon: "🔭",
+      group: "Оптичний прилад",
+      action: "Наближає надзвичайно далекі космічні тіла",
+      use: "Розглядати кратери Місяця, кільця Сатурна, супутники Юпітера та яскраві сузір'я.",
+      unit: "Діаметр лінзи та кратність наближення",
+      fact: "💡 Секрет вченого: Перший астрономічний телескоп створив Галілео Галілей понад 400 років тому!"
+    },
+    scales: {
+      title: "Терези (ваги)",
+      icon: "⚖️",
+      group: "Вимірювальний прилад",
+      action: "Вимірює масу тіл (важкість)",
+      use: "Дізнатися точну вагу яблука, порції солі для розчину чи масу насіння.",
+      unit: "Грами (г), кілограми (кг)",
+      fact: "💡 Секрет вченого: Лабораторні терези з шальками працюють за принципом гойдалки — зрівноважують тіло важками."
+    },
+    stopwatch: {
+      title: "Секундомір / годинник",
+      icon: "⏱️",
+      group: "Вимірювальний прилад",
+      action: "Вимірює проміжки часу з точністю до секунди",
+      use: "Засікти, скільки секунд розчиняється цукор, як швидко біжить мураха чи скільки крапель падає за хвилину.",
+      unit: "Секунди (с), хвилини (хв)",
+      fact: "💡 Секрет вченого: Точний час — ключ до повторюваного експерименту. Без нього неможливо порівняти швидкість процесів!"
+    },
+    ruler: {
+      title: "Лінійка та рулетка",
+      icon: "📏",
+      group: "Вимірювальний прилад",
+      action: "Вимірює довжину, ширину або висоту тіл",
+      use: "Виміряти довжину столу, щоденний ріст стебла квасолі або розмір листка.",
+      unit: "Міліметри (мм), сантиметри (см), метри (м)",
+      fact: "💡 Секрет вченого: Для вимірювання звивистих ліній (наприклад, стовбура дерева) використовують м'яку сантиметрову стрічку!"
+    },
+    thermometer: {
+      title: "Термометр",
+      icon: "🌡️",
+      group: "Вимірювальний прилад",
+      action: "Вимірює температуру (ступінь нагрітості тіл)",
+      use: "Дізнатися температуру повітря за вікном, температуру води в склянці чи тіла людини.",
+      unit: "Градуси Цельсія (°C)",
+      fact: "💡 Секрет вченого: Рідина всередині термометра розширюється від тепла і піднімається вгору, а від холоду — стискається!"
+    },
+    cylinder: {
+      title: "Мензурка (мірний циліндр)",
+      icon: "🧪",
+      group: "Вимірювальний посуд",
+      action: "Вимірює точний об'єм рідини або сипких тіл",
+      use: "Відміряти рівно 50 мл води для хімічного досліду або визначити об'єм опущеного камінця.",
+      unit: "Мілілітри (мл), літри (л)",
+      fact: "💡 Секрет вченого: Якщо кинути камінець у мензурку з водою — рівень рідини підніметься рівно на об'єм цього камінця (закон Архімеда)!"
+    },
+    compass: {
+      title: "Компас",
+      icon: "🧭",
+      group: "Орієнтувальний прилад",
+      action: "Вказує напрямок на сторони горизонту",
+      use: "Визначити, де північ, південь, схід і захід у лісі, на морі чи під час шкільної експедиції.",
+      unit: "Градуси азимута (0°–360°), сторони світу (Пн, Пд, Сх, Зх)",
+      fact: "💡 Секрет вченого: Стрілка компаса — це крихітний магніт, який завжди повертається до магнітного полюса Землі!"
+    }
+  };
+
+  const quizQuestions = [
+    {
+      question: "🌱 Ти посадив насінину квасолі й хочеш щодня записувати, на скільки вона підросла. Який прилад тобі потрібен?",
+      options: ["Термометр", "Лінійка", "Мензурка", "Компас"],
+      correct: "Лінійка",
+      explanation: "Правильно! Лінійка вимірює довжину й висоту в сантиметрах та міліметрах."
+    },
+    {
+      question: "🧊 Ти хочеш дізнатися, за якої саме температури вода в морозилці перетворюється на твердий лід. Що візьмеш?",
+      options: ["Секундомір", "Терези", "Термометр", "Лупу"],
+      correct: "Термометр",
+      explanation: "Точно! Термометр покаже 0°C — температуру замерзання води."
+    },
+    {
+      question: "🐜 На корі дерева сидить крихітна комаха. Ти хочеш розгледіти її лапки та вусики просто під час прогулянки в парку:",
+      options: ["Телескоп", "Лупа", "Мірний циліндр", "Ваги"],
+      correct: "Лупа",
+      explanation: "Чудово! Лупа компактна і збільшує дрібні об'єкти в кілька разів прямо в природі."
+    },
+    {
+      question: "☕ Ти досліджуєш: у якій воді швидше розчиниться цукор — у гарячій чи холодній? Який прилад засіче час розчинення?",
+      options: ["Секундомір", "Компас", "Мікроскоп", "Рулетка"],
+      correct: "Секундомір",
+      explanation: "Бінго! Секундомір точно фіксує секунди, за які цукор повністю зникає у воді."
+    },
+    {
+      question: "🧪 Для досліду потрібно налити рівно 100 мл води. Який лабораторний прилад допоможе виміряти цей об'єм?",
+      options: ["Терези", "Мензурка", "Термометр", "Телескоп"],
+      correct: "Мензурка",
+      explanation: "Правильно! Скляна мензурка з мірними поділками створена саме для вимірювання мілілітрів рідини."
+    }
+  ];
+
+  function setupExplorer() {
+    const navButtons = document.querySelectorAll('.emoji-btn');
+    
+    const badgeEl = document.getElementById('card-group-badge');
+    const iconEl = document.getElementById('card-icon');
+    const titleEl = document.getElementById('card-title');
+    const actionEl = document.getElementById('card-action');
+    const useEl = document.getElementById('card-use');
+    const unitEl = document.getElementById('card-unit');
+    const factEl = document.getElementById('card-fact');
+
+    function selectInstrument(id) {
+      const data = instrumentsData[id];
+      if (!data) return;
+
+      navButtons.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.id === id);
+      });
+
+      // Update Card Content with smooth update
+      if (badgeEl) badgeEl.textContent = data.group;
+      if (iconEl) iconEl.textContent = data.icon;
+      if (titleEl) titleEl.textContent = data.title;
+      if (actionEl) actionEl.textContent = data.action;
+      if (useEl) useEl.textContent = data.use;
+      if (unitEl) unitEl.textContent = data.unit;
+      if (factEl) factEl.innerHTML = data.fact;
+    }
+
+    navButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
+        if (id) selectInstrument(id);
+      });
+    });
+
+    // Quiz logic
+    let currentQIndex = 0;
+    const qTextEl = document.getElementById('quiz-q-text');
+    const qOptionsEl = document.getElementById('quiz-options');
+    const qFeedbackEl = document.getElementById('quiz-feedback');
+    const qNextBtn = document.getElementById('quiz-next-btn');
+
+    function renderQuiz() {
+      if (!qTextEl || !qOptionsEl) return;
+      const q = quizQuestions[currentQIndex];
+      qTextEl.textContent = q.question;
+      qOptionsEl.innerHTML = '';
+      if (qFeedbackEl) {
+        qFeedbackEl.style.display = 'none';
+        qFeedbackEl.className = 'quiz-feedback';
+      }
+      if (qNextBtn) qNextBtn.style.display = 'none';
+
+      q.options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'quiz-option-btn';
+        btn.dataset.option = opt;
+        btn.innerHTML = `<span class="opt-text">${opt}</span>`;
+        btn.addEventListener('click', () => handleQuizAnswer(opt, btn, q));
+        qOptionsEl.appendChild(btn);
+      });
+    }
+
+    function handleQuizAnswer(selected, button, question) {
+      const allBtns = qOptionsEl.querySelectorAll('.quiz-option-btn');
+      allBtns.forEach(b => {
+        b.disabled = true;
+        if (b.dataset.option !== question.correct && b !== button) {
+          b.classList.add('muted');
+        }
+      });
+
+      const isCorrect = selected === question.correct;
+      if (isCorrect) {
+        button.classList.add('correct');
+        button.innerHTML = `<span class="opt-text">${selected}</span><span class="answer-badge correct">✅ Твій вибір (Вірно!)</span>`;
+        if (qFeedbackEl) {
+          qFeedbackEl.textContent = `🎉 ${question.explanation}`;
+          qFeedbackEl.className = 'quiz-feedback success';
+          qFeedbackEl.style.display = 'block';
+        }
+      } else {
+        button.classList.add('wrong');
+        button.innerHTML = `<span class="opt-text">${selected}</span><span class="answer-badge wrong">❌ Твій вибір</span>`;
+        allBtns.forEach(b => {
+          if (b.dataset.option === question.correct) {
+            b.classList.add('correct');
+            b.innerHTML = `<span class="opt-text">${question.correct}</span><span class="answer-badge correct">✨ Правильна відповідь</span>`;
+          }
+        });
+        if (qFeedbackEl) {
+          qFeedbackEl.textContent = `❌ Не зовсім! Правильна відповідь: ${question.correct}. ${question.explanation}`;
+          qFeedbackEl.className = 'quiz-feedback error';
+          qFeedbackEl.style.display = 'block';
+        }
+      }
+
+      if (qNextBtn) {
+        qNextBtn.style.display = 'inline-block';
+      }
+    }
+
+    if (qNextBtn) {
+      qNextBtn.addEventListener('click', () => {
+        currentQIndex = (currentQIndex + 1) % quizQuestions.length;
+        renderQuiz();
+      });
+    }
+
+    renderQuiz();
+  }
+
+  // Init on DOM load and Starlight page change
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupExplorer);
+  } else {
+    setupExplorer();
+  }
+  document.addEventListener('astro:page-load', setupExplorer);
+</script>

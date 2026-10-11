@@ -1,0 +1,431 @@
+---
+// ScienceMythsCards.astro
+// Інтерактивні картки "Руйнівники міфів: чи вірити на слово?" для 3 класу
+---
+
+<div class="myths-container not-content">
+  <div class="myths-header">
+    <span class="myths-badge">💥 Руйнівники міфів</span>
+    <h3>Чи вірити на слово? Перевір наукою!</h3>
+    <p class="myths-subtitle">Натискай на картки, щоб дізнатися, що насправді каже наука про звичні речі.</p>
+  </div>
+
+  <div class="myths-grid">
+    <!-- Card 1 -->
+    <div class="myth-card" role="button" tabindex="0" aria-label="Міф 1: Таємниця смаку">
+      <div class="myth-card-inner">
+        <!-- Front -->
+        <div class="myth-face myth-front">
+          <div class="myth-top">
+            <span class="badge-question">❓ Міф чи Правда?</span>
+            <span class="myth-icon">👅</span>
+          </div>
+          <h4 class="myth-title">«Карта смаків» на язиці</h4>
+          <p class="myth-statement">«Солодке розпізнає лише кінчик язика, кисле — боки, а гірке відчуває тільки корінь?»</p>
+          <div class="flip-hint">Натисни, щоб розкрити таємницю 🔄</div>
+        </div>
+        <!-- Back -->
+        <div class="myth-face myth-back">
+          <div class="myth-top">
+            <span class="badge-verdict myth-busted">❌ Це міф!</span>
+            <span class="myth-icon">🧬</span>
+          </div>
+          <h4 class="myth-title">Усі смаки відчуваються скрізь!</h4>
+          <p class="myth-explanation">
+            Усі смакові сосочки по всій поверхні язика розпізнають і солодке, і солоне, і кисле, і гірке!
+          </p>
+          <div class="myth-fact-box">
+            💡 <strong>Спробуй сам:</strong> поклади крупинку солі на кінчик язика — солоний смак відчується миттєво!
+          </div>
+          <div class="flip-hint back-hint">Повернутися ↩️</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="myth-card" role="button" tabindex="0" aria-label="Міф 2: Падіння предметів">
+      <div class="myth-card-inner">
+        <!-- Front -->
+        <div class="myth-face myth-front">
+          <div class="myth-top">
+            <span class="badge-question">❓ Міф чи Правда?</span>
+            <span class="myth-icon">🪶</span>
+          </div>
+          <h4 class="myth-title">Хто падає швидше?</h4>
+          <p class="myth-statement">«Важкий кавун або яблуко завжди падають на землю швидше, ніж легке перо птаха?»</p>
+          <div class="flip-hint">Натисни, щоб розкрити таємницю 🔄</div>
+        </div>
+        <!-- Back -->
+        <div class="myth-face myth-back">
+          <div class="myth-top">
+            <span class="badge-verdict myth-busted">❌ Це міф!</span>
+            <span class="myth-icon">🚀</span>
+          </div>
+          <h4 class="myth-title">У вакуумі вони впадуть разом!</h4>
+          <p class="myth-explanation">
+            Перо падає повільніше лише тому, що повітря працює для нього як парашут. Якби повітря не було, і кавун, і пір'їнка впали б одночасно!
+          </p>
+          <div class="myth-fact-box">
+            💡 <strong>Історичний дослід:</strong> це відкрив Галілео Галілей, а космонавти на Місяці перевірили це перед камерою!
+          </div>
+          <div class="flip-hint back-hint">Повернутися ↩️</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="myth-card" role="button" tabindex="0" aria-label="Міф 3: Температура ложок">
+      <div class="myth-card-inner">
+        <!-- Front -->
+        <div class="myth-face myth-front">
+          <div class="myth-top">
+            <span class="badge-question">❓ Міф чи Правда?</span>
+            <span class="myth-icon">🥄</span>
+          </div>
+          <h4 class="myth-title">Крижаний метал</h4>
+          <p class="myth-statement">«Якщо залізна ложка на дотик здається холоднішою за дерев'яну, то її температура нижча?»</p>
+          <div class="flip-hint">Натисни, щоб розкрити таємницю 🔄</div>
+        </div>
+        <!-- Back -->
+        <div class="myth-face myth-back">
+          <div class="myth-top">
+            <span class="badge-verdict myth-busted">❌ Це міф!</span>
+            <span class="myth-icon">🌡️</span>
+          </div>
+          <h4 class="myth-title">Їхня температура однакова!</h4>
+          <p class="myth-explanation">
+            Усі речі в одній кімнаті мають однакову температуру повітря. Залізо просто набагато швидше «забирає» тепло від нашої шкіри, ніж дерево!
+          </p>
+          <div class="myth-fact-box">
+            💡 <strong>Урок вченого:</strong> органи чуття можуть обманювати. Саме тому досліднику завжди потрібен термометр!
+          </div>
+          <div class="flip-hint back-hint">Повернутися ↩️</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="myth-card" role="button" tabindex="0" aria-label="Міф 4: Невдалий дослід">
+      <div class="myth-card-inner">
+        <!-- Front -->
+        <div class="myth-face myth-front">
+          <div class="myth-top">
+            <span class="badge-question">❓ Міф чи Правда?</span>
+            <span class="myth-icon">💡</span>
+          </div>
+          <h4 class="myth-title">Невдалий експеримент</h4>
+          <p class="myth-statement">«Якщо дослід не підтвердив очікування вченого, то цей експеримент зіпсовано і це провал?»</p>
+          <div class="flip-hint">Натисни, щоб розкрити таємницю 🔄</div>
+        </div>
+        <!-- Back -->
+        <div class="myth-face myth-back">
+          <div class="myth-top">
+            <span class="badge-verdict myth-busted">❌ Це міф!</span>
+            <span class="myth-icon">🏆</span>
+          </div>
+          <h4 class="myth-title">Це теж велике відкриття!</h4>
+          <p class="myth-explanation">
+            У науці будь-який результат цінний. Якщо гіпотеза не справдилася, вчений дізнався, як насправді влаштований світ, і не повторюватиме помилок!
+          </p>
+          <div class="myth-fact-box">
+            💡 <strong>Секрет винахідника:</strong> Томас Едісон казав: <em>«Я не зазнав невдачі, я знайшов 10 000 способів, які не працюють!»</em>
+          </div>
+          <div class="flip-hint back-hint">Повернутися ↩️</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style is:global>
+  .myths-container {
+    margin: 2.5rem 0;
+    padding: 1.5rem;
+    border-radius: 20px;
+    background: linear-gradient(135deg, rgba(236, 72, 153, 0.08) 0%, rgba(124, 58, 237, 0.08) 100%);
+    border: 1px solid rgba(236, 72, 153, 0.25);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+  }
+
+  [data-theme='light'] .myths-container {
+    background: linear-gradient(135deg, #fff5f8 0%, #fbf8ff 100%);
+    border: 1px solid #fbcfe8;
+    box-shadow: 0 8px 24px rgba(236, 72, 153, 0.08);
+  }
+
+  .myths-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .myths-badge {
+    display: inline-block;
+    padding: 0.25rem 0.85rem;
+    font-size: 0.82rem;
+    font-weight: 800;
+    border-radius: 999px;
+    background: #ec4899;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+  }
+
+  .myths-header h3 {
+    margin: 0 0 0.4rem 0;
+    font-size: 1.45rem;
+    font-weight: 800;
+  }
+
+  .myths-subtitle {
+    margin: 0;
+    font-size: 0.95rem;
+    opacity: 0.85;
+  }
+
+  /* Grid of 4 cards: 2x2 on desktop, 1 col on mobile */
+  .myths-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 1.25rem;
+    row-gap: 2rem;
+  }
+
+  @media (max-width: 720px) {
+    .myths-grid {
+      grid-template-columns: 1fr;
+      row-gap: 1.5rem;
+    }
+  }
+
+  /* 3D Flip Card Container */
+  .myth-card {
+    perspective: 1000px;
+    min-height: 340px;
+    cursor: pointer;
+    outline: none;
+    user-select: none;
+  }
+
+  .myth-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 340px;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+    border-radius: 16px;
+  }
+
+  .myth-card.flipped .myth-card-inner {
+    transform: rotateY(180deg);
+  }
+
+  /* Front and Back Faces */
+  .myth-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 16px;
+    padding: 1.25rem 1.35rem;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+    transition: box-shadow 0.25s ease, border-color 0.25s ease;
+  }
+
+  /* Front Face Design */
+  .myth-front {
+    background: #1e293b;
+    border: 2px solid #334155;
+    color: #f8fafc;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  }
+
+  [data-theme='light'] .myth-front {
+    background: #ffffff;
+    border: 2px solid #e2e8f0;
+    color: #0f172a;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+  }
+
+  .myth-card:hover .myth-front {
+    border-color: #ec4899;
+    box-shadow: 0 8px 24px rgba(236, 72, 153, 0.25);
+  }
+
+  [data-theme='light'] .myth-card:hover .myth-front {
+    border-color: #ec4899;
+    box-shadow: 0 6px 20px rgba(236, 72, 153, 0.15);
+  }
+
+  /* Back Face Design */
+  .myth-back {
+    background: #0f172a;
+    border: 2px solid #ec4899;
+    color: #f8fafc;
+    transform: rotateY(180deg);
+    box-shadow: 0 8px 24px rgba(236, 72, 153, 0.3);
+  }
+
+  [data-theme='light'] .myth-back {
+    background: #fdf2f8;
+    border: 2px solid #f472b6;
+    color: #0f172a;
+    box-shadow: 0 6px 20px rgba(236, 72, 153, 0.12);
+  }
+
+  /* Card Interior Typography & Badges */
+  .myth-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.65rem;
+  }
+
+  .badge-question {
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+    background: rgba(124, 58, 237, 0.2);
+    color: #c084fc;
+    border: 1px solid rgba(124, 58, 237, 0.4);
+    text-transform: uppercase;
+  }
+
+  [data-theme='light'] .badge-question {
+    background: #ede9fe;
+    color: #7c3aed;
+    border-color: #ddd6fe;
+  }
+
+  .badge-verdict {
+    font-size: 0.8rem;
+    font-weight: 900;
+    padding: 0.25rem 0.7rem;
+    border-radius: 6px;
+    letter-spacing: 0.03em;
+  }
+
+  .badge-verdict.myth-busted {
+    background: #dc2626;
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.4);
+  }
+
+  .myth-icon {
+    font-size: 1.8rem;
+    line-height: 1;
+  }
+
+  .myth-title {
+    margin: 0 0 0.4rem 0;
+    font-size: 1.1rem;
+    font-weight: 800;
+  }
+
+  .myth-statement {
+    margin: 0;
+    font-size: 0.94rem;
+    line-height: 1.4;
+    font-weight: 500;
+    opacity: 0.95;
+    flex-grow: 1;
+  }
+
+  .myth-explanation {
+    margin: 0 0 0.4rem 0;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    font-weight: 500;
+  }
+
+  .myth-fact-box {
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    background: rgba(234, 179, 8, 0.12);
+    border-left: 3px solid #eab308;
+    font-size: 0.83rem;
+    line-height: 1.35;
+    margin-bottom: 0.4rem;
+  }
+
+  [data-theme='light'] .myth-fact-box {
+    background: #fefce8;
+    border-left-color: #ca8a04;
+    color: #713f12;
+  }
+
+  .flip-hint {
+    margin-top: 0.35rem;
+    padding: 0.35rem 0.6rem;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-align: center;
+    color: inherit;
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    transition: all 0.2s ease;
+  }
+
+  [data-theme='light'] .flip-hint {
+    background: #f1f5f9;
+    border: 1px dashed #cbd5e1;
+    color: #475569;
+  }
+
+  .flip-hint.back-hint {
+    background: rgba(236, 72, 153, 0.15);
+    border-color: rgba(236, 72, 153, 0.35);
+  }
+
+  [data-theme='light'] .flip-hint.back-hint {
+    background: #fce7f3;
+    border-color: #f472b6;
+    color: #be185d;
+  }
+
+  .myth-card:hover .flip-hint {
+    background: #ec4899;
+    color: #ffffff;
+    border-style: solid;
+    border-color: #ec4899;
+  }
+</style>
+
+<script>
+  function setupMythsCards() {
+    const cards = document.querySelectorAll('.myth-card');
+    cards.forEach(card => {
+      // Click toggle
+      card.addEventListener('click', () => {
+        card.classList.toggle('flipped');
+      });
+
+      // Keyboard accessibility (Enter or Space)
+      card.addEventListener('keydown', (e) => {
+        const keyboardEvent = e as KeyboardEvent;
+        if (keyboardEvent.key === 'Enter' || keyboardEvent.key === ' ') {
+          keyboardEvent.preventDefault();
+          card.classList.toggle('flipped');
+        }
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupMythsCards);
+  } else {
+    setupMythsCards();
+  }
+  document.addEventListener('astro:page-load', setupMythsCards);
+</script>

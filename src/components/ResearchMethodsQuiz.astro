@@ -1,0 +1,406 @@
+---
+// ResearchMethodsQuiz.astro
+// Інтерактивна вікторина: розпізнавання методів дослідження (спостереження, вимірювання, експеримент)
+---
+
+<div class="methods-quiz-wrapper not-content">
+  <div class="quiz-box" id="methods-quiz-box">
+    <div class="quiz-header">
+      <span class="quiz-badge">🎯 Тренажер знань</span>
+      <h4>Вгадай метод дослідження природи</h4>
+      <span class="quiz-counter" id="methods-quiz-counter">1 / 3</span>
+    </div>
+    <p class="quiz-question" id="methods-quiz-q-text">
+      Завантаження запитання...
+    </p>
+    <div class="quiz-options" id="methods-quiz-options"></div>
+    <div class="quiz-feedback" id="methods-quiz-feedback" style="display: none;"></div>
+    <button class="quiz-next-btn" id="methods-quiz-next-btn" style="display: none;">Наступне запитання ➡️</button>
+  </div>
+</div>
+
+<style is:global>
+  .methods-quiz-wrapper {
+    margin: 2rem 0;
+  }
+
+  .methods-quiz-wrapper .quiz-box {
+    padding: 1.35rem;
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(168, 85, 247, 0.08) 100%);
+    border: 1px solid rgba(168, 85, 247, 0.25);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+  }
+
+  [data-theme='light'] .methods-quiz-wrapper .quiz-box {
+    background: linear-gradient(135deg, #f5f3ff 0%, #faf5ff 100%);
+    border: 1px solid #ddd6fe;
+    color: #0f172a;
+    box-shadow: 0 8px 24px rgba(124, 58, 237, 0.06);
+  }
+
+  .methods-quiz-wrapper .quiz-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .methods-quiz-wrapper .quiz-badge {
+    padding: 0.25rem 0.65rem;
+    font-size: 0.75rem;
+    font-weight: 800;
+    border-radius: 6px;
+    background: #7c3aed;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .methods-quiz-wrapper .quiz-header h4 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+    flex-grow: 1;
+  }
+
+  .methods-quiz-wrapper .quiz-counter {
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0.2rem 0.55rem;
+    border-radius: 6px;
+    background: rgba(124, 58, 237, 0.15);
+    color: #a855f7;
+  }
+
+  [data-theme='light'] .methods-quiz-wrapper .quiz-counter {
+    background: #ede9fe;
+    color: #6d28d9;
+  }
+
+  .methods-quiz-wrapper .quiz-question {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin: 0 0 1rem 0;
+    line-height: 1.5;
+  }
+
+  .methods-quiz-wrapper .quiz-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1.1rem;
+    align-items: center;
+  }
+
+  @media (max-width: 680px) {
+    .methods-quiz-wrapper .quiz-options {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .methods-quiz-wrapper .quiz-option-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 46px;
+    min-height: 46px;
+    margin: 0 !important;
+    padding: 0.5rem 0.85rem;
+    border-radius: 12px;
+    background: #1e293b;
+    border: 2px solid #64748b;
+    color: #f8fafc !important;
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.2;
+    cursor: pointer;
+    text-align: center;
+    box-sizing: border-box;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  }
+
+  .methods-quiz-wrapper .quiz-option-btn .opt-text {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    white-space: nowrap;
+    line-height: 1.2;
+  }
+
+  [data-theme='light'] .methods-quiz-wrapper .quiz-option-btn {
+    background: #ffffff;
+    border: 2px solid #cbd5e1;
+    color: #0f172a !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  }
+
+  .methods-quiz-wrapper .quiz-option-btn:hover:not(:disabled) {
+    background: #334155;
+    border-color: #a855f7;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(168, 85, 247, 0.25);
+  }
+
+  [data-theme='light'] .methods-quiz-wrapper .quiz-option-btn:hover:not(:disabled) {
+    background: #f8faff;
+    border-color: #7c3aed;
+    box-shadow: 0 6px 14px rgba(124, 58, 237, 0.15);
+  }
+
+  .methods-quiz-wrapper .quiz-option-btn:disabled {
+    cursor: default;
+  }
+
+  .methods-quiz-wrapper .quiz-option-btn.muted {
+    opacity: 0.3 !important;
+    filter: grayscale(0.5);
+    border-color: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .methods-quiz-wrapper .quiz-option-btn.correct {
+    background: #16a34a !important;
+    border: 3px solid #22c55e !important;
+    color: #ffffff !important;
+    opacity: 1 !important;
+    transform: scale(1.02);
+    box-shadow: 0 6px 22px rgba(22, 163, 74, 0.55) !important;
+  }
+
+  [data-theme='light'] .methods-quiz-wrapper .quiz-option-btn.correct {
+    background: #16a34a !important;
+    border: 3px solid #14532d !important;
+    color: #ffffff !important;
+    box-shadow: 0 6px 22px rgba(22, 163, 74, 0.45) !important;
+  }
+
+  .methods-quiz-wrapper .quiz-option-btn.correct span {
+    color: #ffffff !important;
+    font-weight: 800 !important;
+  }
+
+  .methods-quiz-wrapper .quiz-option-btn.wrong {
+    background: #dc2626 !important;
+    border: 3px solid #ef4444 !important;
+    color: #ffffff !important;
+    opacity: 1 !important;
+    transform: scale(1.02);
+    box-shadow: 0 6px 22px rgba(220, 38, 38, 0.55) !important;
+  }
+
+  [data-theme='light'] .methods-quiz-wrapper .quiz-option-btn.wrong {
+    background: #dc2626 !important;
+    border: 3px solid #7f1d1d !important;
+    color: #ffffff !important;
+    box-shadow: 0 6px 22px rgba(220, 38, 38, 0.45) !important;
+  }
+
+  .methods-quiz-wrapper .quiz-option-btn.wrong span {
+    color: #ffffff !important;
+    font-weight: 800 !important;
+  }
+
+  .methods-quiz-wrapper .answer-badge {
+    font-size: 0.8rem;
+    font-weight: 800;
+    padding: 0.3rem 0.7rem;
+    border-radius: 8px;
+    white-space: nowrap;
+    margin-left: 0.5rem;
+    line-height: 1.2;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  }
+
+  .methods-quiz-wrapper .answer-badge.correct {
+    background: #14532d;
+    color: #ffffff !important;
+  }
+
+  .methods-quiz-wrapper .answer-badge.wrong {
+    background: #7f1d1d;
+    color: #ffffff !important;
+  }
+
+  .methods-quiz-wrapper .quiz-feedback {
+    padding: 0.9rem 1.15rem;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.45;
+    margin-bottom: 1rem;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .methods-quiz-wrapper .quiz-feedback.success {
+    background: rgba(6, 78, 59, 0.6);
+    border: 2px solid #22c55e;
+    color: #86efac;
+  }
+
+  [data-theme='light'] .methods-quiz-wrapper .quiz-feedback.success {
+    background: #dcfce7;
+    border: 2px solid #16a34a;
+    color: #14532d;
+  }
+
+  .methods-quiz-wrapper .quiz-feedback.error {
+    background: rgba(127, 29, 29, 0.6);
+    border: 2px solid #ef4444;
+    color: #fca5a5;
+  }
+
+  [data-theme='light'] .methods-quiz-wrapper .quiz-feedback.error {
+    background: #fee2e2;
+    border: 2px solid #dc2626;
+    color: #7f1d1d;
+  }
+
+  .methods-quiz-wrapper .quiz-next-btn {
+    padding: 0.6rem 1.25rem;
+    border-radius: 10px;
+    background: #7c3aed;
+    color: #ffffff;
+    border: none;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+  }
+
+  .methods-quiz-wrapper .quiz-next-btn:hover {
+    background: #6d28d9;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(124, 58, 237, 0.45);
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+
+<script>
+  const methodsQuestions = [
+    {
+      situationNum: 1,
+      question: "Ситуація 1: Учень рахує, скільки крапель води падає з крана за 1 хвилину за допомогою секундоміра.",
+      options: ["👁️ Спостереження", "📏 Вимірювання", "🧪 Експеримент (дослід)"],
+      correct: "📏 Вимірювання",
+      explanation: "Учень використовує секундомір і визначає точну числову величину за час — це вимірювання!"
+    },
+    {
+      situationNum: 2,
+      question: "Ситуація 2: Дівчинка розглядає через лупу прожилки на осінньому листочку тополі, не змінюючи сам листочок.",
+      options: ["👁️ Спостереження", "📏 Вимірювання", "🧪 Експеримент (дослід)"],
+      correct: "👁️ Спостереження",
+      explanation: "Дівчинка уважно вивчає природний об'єкт за допомогою зору та лупи, не втручаючись у нього — це спостереження!"
+    },
+    {
+      situationNum: 3,
+      question: "Ситуація 3: Хлопчик поклав один шматочок яблука на тарілку, а інший змастив лимонним соком, щоб перевірити, чи потемніє воно.",
+      options: ["👁️ Спостереження", "📏 Вимірювання", "🧪 Експеримент (дослід)"],
+      correct: "🧪 Експеримент (дослід)",
+      explanation: "Хлопчик штучно створив різні умови (правило єдиної змінної — лимонний сік), щоб перевірити здогадку — це справжній дослід (експеримент)!"
+    }
+  ];
+
+  function setupMethodsQuiz() {
+    let currentIdx = 0;
+    const qTextEl = document.getElementById('methods-quiz-q-text');
+    const qCounterEl = document.getElementById('methods-quiz-counter');
+    const qOptionsEl = document.getElementById('methods-quiz-options');
+    const qFeedbackEl = document.getElementById('methods-quiz-feedback');
+    const qNextBtn = document.getElementById('methods-quiz-next-btn');
+
+    if (!qTextEl || !qOptionsEl) return;
+
+    function renderQuestion() {
+      const q = methodsQuestions[currentIdx];
+      qTextEl.textContent = q.question;
+      if (qCounterEl) {
+        qCounterEl.textContent = `${currentIdx + 1} / ${methodsQuestions.length}`;
+      }
+      qOptionsEl.innerHTML = '';
+      if (qFeedbackEl) {
+        qFeedbackEl.style.display = 'none';
+        qFeedbackEl.className = 'quiz-feedback';
+      }
+      if (qNextBtn) {
+        qNextBtn.style.display = 'none';
+        qNextBtn.textContent = currentIdx === methodsQuestions.length - 1 ? 'Почати спочатку 🔄' : 'Наступне запитання ➡️';
+      }
+
+      q.options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'quiz-option-btn';
+        btn.dataset.option = opt;
+        btn.innerHTML = `<span class="opt-text">${opt}</span>`;
+        btn.addEventListener('click', () => handleAnswer(opt, btn, q));
+        qOptionsEl.appendChild(btn);
+      });
+    }
+
+    function handleAnswer(selected, button, question) {
+      const allBtns = qOptionsEl.querySelectorAll('.quiz-option-btn');
+      allBtns.forEach(b => {
+        b.disabled = true;
+        if (b.dataset.option !== question.correct && b !== button) {
+          b.classList.add('muted');
+        }
+      });
+
+      const isCorrect = selected === question.correct;
+      if (isCorrect) {
+        button.classList.add('correct');
+        button.innerHTML = `<span class="opt-text">${selected}</span><span class="answer-badge correct">✅ Твій вибір (Вірно!)</span>`;
+        if (qFeedbackEl) {
+          qFeedbackEl.textContent = `🎉 ${question.explanation}`;
+          qFeedbackEl.className = 'quiz-feedback success';
+          qFeedbackEl.style.display = 'block';
+        }
+      } else {
+        button.classList.add('wrong');
+        button.innerHTML = `<span class="opt-text">${selected}</span><span class="answer-badge wrong">❌ Твій вибір</span>`;
+        allBtns.forEach(b => {
+          if (b.dataset.option === question.correct) {
+            b.classList.add('correct');
+            b.innerHTML = `<span class="opt-text">${question.correct}</span><span class="answer-badge correct">✨ Правильна відповідь</span>`;
+          }
+        });
+        if (qFeedbackEl) {
+          qFeedbackEl.textContent = `❌ Не зовсім! Правильна відповідь: ${question.correct}. ${question.explanation}`;
+          qFeedbackEl.className = 'quiz-feedback error';
+          qFeedbackEl.style.display = 'block';
+        }
+      }
+
+      if (qNextBtn) {
+        qNextBtn.style.display = 'inline-block';
+      }
+    }
+
+    if (qNextBtn) {
+      qNextBtn.onclick = () => {
+        currentIdx = (currentIdx + 1) % methodsQuestions.length;
+        renderQuestion();
+      };
+    }
+
+    renderQuestion();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupMethodsQuiz);
+  } else {
+    setupMethodsQuiz();
+  }
+  document.addEventListener('astro:page-load', setupMethodsQuiz);
+</script>

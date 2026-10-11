@@ -40,6 +40,7 @@ export default defineConfig({
               label: 'Людина і нежива природа',
               items: [
                 { label: '1. Тіла, речовини та частинки', link: '/world/inanimate-nature/01-bodies-and-substances/' },
+                { label: '2. Лабораторія дослідника', link: '/world/inanimate-nature/02-how-we-explore/' },
               ],
             },
           ],
